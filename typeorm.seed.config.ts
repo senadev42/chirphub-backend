@@ -15,6 +15,6 @@ export default new DataSource({
 
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/seeders/**/*.ts'],
-    migrationsTableName: 'seed_migrations',
+    migrationsTableName: 'seedings',
     ssl: process.env.NEONDB == 'true' || false,
 });
