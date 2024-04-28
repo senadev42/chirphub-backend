@@ -21,7 +21,7 @@ export class BirdhouseController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.birdhouseService.findOne(+id);
+    return this.birdhouseService.findOne(id);
   }
 
   @Patch(':id')

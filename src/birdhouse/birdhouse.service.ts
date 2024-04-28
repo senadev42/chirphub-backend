@@ -11,11 +11,13 @@ export class BirdhouseService {
   constructor(
     @InjectRepository(Birdhouse)
     private birdhouseRepository: Repository<Birdhouse>,
- ) {}
+  ) {}
 
- 
   create(createBirdhouseDto: CreateBirdhouseDto, ubid: string) {
-    const newBirdhouse = this.birdhouseRepository.create({ ...createBirdhouseDto, ubid });
+    const newBirdhouse = this.birdhouseRepository.create({
+      ...createBirdhouseDto,
+      ubid,
+    });
     return this.birdhouseRepository.save(newBirdhouse);
   }
 
@@ -23,8 +25,8 @@ export class BirdhouseService {
     return `This action returns all birdhouse`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} birdhouse`;
+  findOne(id: string) {
+    return this.birdhouseRepository.findOne({ where: { id: id } });
   }
 
   update(id: number, updateBirdhouseDto: UpdateBirdhouseDto) {
