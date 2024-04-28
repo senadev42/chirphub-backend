@@ -1,5 +1,5 @@
 // src/birdhouse/dto/create-birdhouse.dto.ts
-import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateBirdhouseDto {
   @IsNotEmpty()
@@ -15,4 +15,19 @@ export class CreateBirdhouseDto {
   @IsNumber()
   latitude: number;
 }
+
+export class UpdateBirdhouseDto {
+ @IsOptional()
+ @IsNumber()
+ longitude?: number;
+
+ @IsOptional()
+ @IsNumber()
+ latitude?: number;
+
+ @IsOptional()
+ @IsString()
+ name?: string;
+}
+
 

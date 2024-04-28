@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { BirdhouseService } from './birdhouse.service';
-import { CreateBirdhouseDto } from './dto/birdhouse-request.dto';
-import { CreateBirdhouseResponseDto, UpdateBirdhouseDto } from './dto/birdhouse-response.dto';
+import { CreateBirdhouseDto, UpdateBirdhouseDto } from './dto/birdhouse-request.dto';
+import { CreateBirdhouseResponseDto } from './dto/birdhouse-response.dto';
+import { XUbidGuard } from 'src/gaurds/xubid.guard';
 
 @Controller('house')
 export class BirdhouseController {
   constructor(private readonly birdhouseService: BirdhouseService) {}
 
   @Post()
+  @UseGuards(XUbidGuard)
   async create(@Body() createBirdhouseDto: CreateBirdhouseDto, @Req() request) {
     const ubid = request.headers['x-ubid'];
     const newBirdhouse = await this.birdhouseService.create(createBirdhouseDto, ubid);
@@ -25,8 +27,10 @@ export class BirdhouseController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBirdhouseDto: UpdateBirdhouseDto) {
-    return this.birdhouseService.update(+id, updateBirdhouseDto);
+  @UseGuards(XUbidGuard)
+  update(@Param('id') id: string, @Body() updateBirdhouseDto: UpdateBirdhouseDto, @Req() request) {
+    const ubid = request.headers['x-ubid'];
+    return this.birdhouseService.update(id, updateBirdhouseDto, ubid);
   }
 
   @Delete(':id')

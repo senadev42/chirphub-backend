@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBirdhouseDto } from './dto/birdhouse-request.dto';
 import { UpdateBirdhouseDto } from './dto/birdhouse-response.dto';
 import { Birdhouse } from './entities/birdhouse.entity';
@@ -29,8 +29,18 @@ export class BirdhouseService {
     return this.birdhouseRepository.findOne({ where: { id: id } });
   }
 
-  update(id: number, updateBirdhouseDto: UpdateBirdhouseDto) {
-    return `This action updates a #${id} birdhouse`;
+  async update(id: string, updateData: Partial<Birdhouse>, ubid) {
+    const birdhouse = await this.birdhouseRepository.findOne({ where: { id: id } });
+    if (!birdhouse) {
+      throw new NotFoundException(`Birdhouse with ID ${id} not found`);
+    }
+
+    if (birdhouse.ubid !== ubid) {
+      throw new HttpException('Ubid does not match the birdhouse', HttpStatus.UNAUTHORIZED);
+    }
+    
+    Object.assign(birdhouse, updateData);
+    return this.birdhouseRepository.save(birdhouse);
   }
 
   remove(id: number) {
