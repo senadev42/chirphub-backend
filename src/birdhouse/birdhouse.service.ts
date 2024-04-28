@@ -22,14 +22,14 @@ export class BirdhouseService {
   }
 
   findAll() {
-    return `This action returns all birdhouse`;
+    return this.birdhouseRepository.find();
   }
 
   findOne(id: string) {
     return this.birdhouseRepository.findOne({ where: { id: id } });
   }
 
-  async update(id: string, updateData: Partial<Birdhouse>, ubid) {
+  async update(id: string, updateData: Partial<Birdhouse>, ubid: string) {
     const birdhouse = await this.birdhouseRepository.findOne({ where: { id: id } });
     if (!birdhouse) {
       throw new NotFoundException(`Birdhouse with ID ${id} not found`);
@@ -43,7 +43,7 @@ export class BirdhouseService {
     return this.birdhouseRepository.save(birdhouse);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} birdhouse`;
+  remove(id: string, ubid: string) {
+    return `This action removes a ${id} birdhouse`;
   }
 }

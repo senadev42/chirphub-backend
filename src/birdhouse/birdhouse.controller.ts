@@ -34,7 +34,9 @@ export class BirdhouseController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.birdhouseService.remove(+id);
+  @UseGuards(XUbidGuard)
+  remove(@Param('id') id: string, @Req() request) {
+    const ubid = request.headers['x-ubid'];
+    return this.birdhouseService.remove(id, ubid);
   }
 }
