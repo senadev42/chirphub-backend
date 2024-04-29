@@ -6,9 +6,16 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 //Modules
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import * as morgan from 'morgan';
+import { LoggerFactory } from './utils/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: LoggerFactory('Nest'),
+  });
+  
+  //logging
+  app.use(morgan('tiny'));
 
   //configs
   const apiPrefix = 'api';

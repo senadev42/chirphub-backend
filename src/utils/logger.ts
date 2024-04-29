@@ -1,0 +1,27 @@
+import { transports, format } from 'winston';
+import {
+  WinstonModule,
+  utilities as nestWinstonModuleUtilities,
+} from 'nest-winston';
+import { Format } from 'logform';
+
+export const LoggerFactory = (appName: string) => {
+  let consoleFormat: Format;
+
+  const DEBUG = process.env.DEBUG;
+
+  consoleFormat = format.combine(
+    format.timestamp(),
+    format.ms(),
+    nestWinstonModuleUtilities.format.nestLike(appName, {
+      colors: true,
+      prettyPrint: true,
+    }),
+  );
+
+  return WinstonModule.createLogger({
+    level: DEBUG ? 'debug' : 'info',
+    transports: [new transports.Console({ format: consoleFormat })],
+  });
+};
+
