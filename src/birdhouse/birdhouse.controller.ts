@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { BirdhouseService } from './birdhouse.service';
 import { CreateBirdhouseDto, UpdateBirdhouseDto } from './dto/birdhouse-request.dto';
-import { CreateBirdhouseResponseDto } from './dto/birdhouse-response.dto';
+import { AllBirdhouseResponseDto, CreateBirdhouseResponseDto } from './dto/birdhouse-response.dto';
 import { XUbidGuard } from 'src/gaurds/xubid.guard';
-import { ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiXBUIDHeader } from './decorators/xubid-header.decorator';
 
 @ApiTags('birdhouse')
@@ -23,7 +23,7 @@ export class BirdhouseController {
   @Get()
   @ApiOperation({ summary: 'Fetch all registered bird houses' })
   @ApiResponse({ status: 200 })
-  findAll() {
+  findAll(): Promise<AllBirdhouseResponseDto[]> {
     return this.birdhouseService.findAll();
   }
 
@@ -34,7 +34,7 @@ export class BirdhouseController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a birdhouse. Needs X-UBID.' })
+  @ApiOperation({ summary: 'Update a birdhouse by id. Needs a valid, registered X-UBID.' })
   @ApiXBUIDHeader()
   @UseGuards(XUbidGuard)
   update(@Param('id') id: string, @Body() updateBirdhouseDto: UpdateBirdhouseDto, @Req() request) {
@@ -44,6 +44,7 @@ export class BirdhouseController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deregister a birdhouse. Needs X-UBID.' })
+  @ApiParam({ name: 'id', description: 'Birdhouse uuid in Database' })
   @ApiXBUIDHeader()
   @UseGuards(XUbidGuard)
   remove(@Param('id') id: string, @Req() request) {

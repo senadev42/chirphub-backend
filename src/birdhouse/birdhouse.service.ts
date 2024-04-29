@@ -19,30 +19,85 @@ export class BirdhouseService {
     private birdhouseRepository: Repository<Birdhouse>,
   ) {}
 
+  /**
+   * Register a birdhouse
+   * @param createBirdhouseDto
+   * @returns Birdhouse entity/record
+   */
   create(createBirdhouseDto: CreateBirdhouseDto) {
-
     const ubid = uuid();
-    const newBirdhouse = this.birdhouseRepository.create({...createBirdhouseDto, ubid});
+    const newBirdhouse = this.birdhouseRepository.create({
+      ...createBirdhouseDto,
+      ubid,
+    });
 
     const createdbirdhouse = this.birdhouseRepository.save(newBirdhouse);
 
     Logger.log(
       `Birdhouse ${newBirdhouse.name} created by ${ubid}`,
-      'BirdhouseService',
+      'CreateBirdhouseService',
     );
 
     return createdbirdhouse;
   }
 
+  /**
+   * Returns list of all birdhouses
+   * @returns List of all bird houses
+   */
   findAll() {
-    return this.birdhouseRepository.find();
+    const birdhouseList = this.birdhouseRepository.find();
+
+    Logger.log(
+      `Fetched and return list of all bird houses`,
+      'FetchAllBirdhouseService',
+    );
+    return birdhouseList;
   }
 
+  /**
+   * Returns a birdhouse record
+   * @param id birdhouse db identifier
+   * @returns Birdhouse record
+   */
   findOne(id: string) {
     return this.birdhouseRepository.findOne({ where: { id: id } });
   }
 
-  async update(id: string, updateData: Partial<Birdhouse>, ubid: string) {
+  /**
+   * Updates a birdhouse record
+   * @param id birdhouse db identifier
+   * @param updateData birdhouse record
+   * @param ubid birdhouse BIRD header
+   * @returns Updated birdhouse record */
+  async update(
+    id: string,
+    updateData: Partial<CreateBirdhouseDto>,
+    ubid: string,
+  ) {
+    const birdhouse = await this.birdhouseRepository.findOne({
+      where: { id: id },
+    });
+
+    Object.assign(birdhouse, updateData);
+
+    const updatedBirdhouse = this.birdhouseRepository.save(birdhouse);
+
+    Logger.log(
+      `Birdhouse ${birdhouse.id} updated by ${ubid}.`,
+      'CreateBirdhouseService',
+    );
+
+    return updatedBirdhouse;
+  }
+
+  /**
+   * Deregisters a birdhouse
+   * @param id birdhouse db identifier
+   * @param ubid birdhouse BIRD header
+   * @returns
+   */
+  async remove(id: string, ubid: string) {
     const birdhouse = await this.birdhouseRepository.findOne({
       where: { id: id },
     });
@@ -50,19 +105,7 @@ export class BirdhouseService {
       throw new NotFoundException(`Birdhouse with ID ${id} not found`);
     }
 
-    if (birdhouse.ubid !== ubid) {
-      throw new HttpException(
-        'Ubid does not match the birdhouse',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    Object.assign(birdhouse, updateData);
-    return this.birdhouseRepository.save(birdhouse);
-  }
-
-  remove(id: string, ubid: string) {
-    return `This action removes a ${id} birdhouse`;
+    await this.birdhouseRepository.remove(birdhouse);
+    return { message: `Birdhouse with ID ${id} removed successfully` };
   }
 }
-

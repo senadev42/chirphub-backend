@@ -12,7 +12,7 @@ export class Birdhouse {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid', unique: true })
+  @Column({ type: 'uuid', unique: true, select: false })
   ubid: string;
 
   @Column({ length: 16 })
