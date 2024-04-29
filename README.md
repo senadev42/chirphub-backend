@@ -72,16 +72,18 @@ Replace `{port}` with the port configured in your environment variables.
 
 I started with the frontend first since I'm less familiar with vue compare to nest and wanted to get that out of the way. Since I started this after getting all the pages set up with a mock json web server, I already had a solid idea of what I wanted the backend to look like.
 
-Database-wise I decided to go with using postgres + typeorm which doesn't have built in seeding compared to other orms, and while there are libraries that cover this gap, they were all either somewhat old and depreciated or new and experimental, so I decided to create a datasource dedicated for seeding and utilize typeorm's migrations for seeding.
+Database-wise I decided to go with using postgres + typeorm which doesn't have built in seeding compared to other orms, and while there are libraries that cover this gap, they were all either somewhat old and depreciated or new and experimental, so I decided to create a datasource dedicated for seeding and utilize typeorm's migrations for seeding. The seeder was initially just a copy of the mock data I was using for the frontend json web server, but I modified it later to randomly generate new types of birdhouses with randomly set locations, names and residency history.
 
-After getting a set of CRUD controllers for the birdhouse resource set up with nest's built in generator, I decided to setup validators to use with the dtos. 
+Since I decided to start with seeding, the entities were the first thing to get made. After getting a set of CRUD controllers for those entities set up with nest's built in generator, I decided to setup validators to use with the dtos. 
 
-Then came creating the gaurd to protect the routes that modify birdhouses. At this point I had a good number of endpoints so I decided to invest in swagger.
+Then came creating the gaurd to protect the routes that modify birdhouses. While basic at first, just checking for the prescence of the X-UBID header on a request, it would later get upgraded to check if it was valid uuid using regex, if it belonged to any birdhouse and if it belonged to the birdhouse it was trying to alter specifically.
 
-There was a slight detour since I'd kept thinking of UBID's as something birdhouse devices possessed intrinsically, like a MAC address for a laptop or a phone, but that didn't align with how the endpoints were described so I scrapped that. 
+At this point I had a good number of endpoints so I decided to invest in swagger. I stuck to the default provided ones but the controllers with the X-UBID needed something custom, so I extracted the ApiHeader I had into its own decorator.
 
-The main birdhouse endpoints were setup I decided to setup logging with morgan (for http requests) and winston/nest-winston. It's always a tradeoff between should I do this myself or use a library, and the second one won here since there was no real reason for me to setup my own http logging middleware when I could just just ```app.use(morgan('tiny'));```. The scheduling was done using nestjs/schedule and give its own module.
+There was a slight detour since I'd kept thinking of UBID's as something birdhouse devices possessed intrinsically (like a MAC address for a laptop or a phone), but that didn't align with how the endpoints were described so I scrapped that. 
 
-After that I finished the residency endpoints and it was time to integrate and clean up.
+Once all the main birdhouse endpoints were setup I decided to setup logging with morgan (for http requests) and winston/nest-winston. It's always a tradeoff between should I do this myself or use a library, and the second one won here since there was no real reason for me to setup my own http logging middleware when I could just just ```app.use(morgan('tiny'));```. The scheduling was done using nestjs/schedule and give its own tasks module.
+
+After that I finished the residency endpoints (and while I did consider moving them out to their module, architecturally it was part of the same family as bird so I extracted into separate controllers/services but they all belong to the birdhouse module ) and it was time to integrate and clean up.
 
 
