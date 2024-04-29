@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Birdhouse } from './entities/birdhouse.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,9 +21,14 @@ export class ResidenceService {
    * @param createBirdhouseDto
    * @returns Birdhouse entity/record
    */
-  async createrecord(id: string, createResidenceRecordDto: UpdateResidenceDto) {
-
-    const birdhouse = await this.birdhouseRepository.findOne({ where: { id: id } });
+  async createrecord(
+    id: string,
+    createResidenceRecordDto: UpdateResidenceDto,
+    ubid: string,
+  ) {
+    const birdhouse = await this.birdhouseRepository.findOne({
+      where: { id: id },
+    });
 
     // Create a new BirdhouseHistory record
     const birdhouseHistory = this.birdhouseHistoryRepository.create({
@@ -43,25 +44,37 @@ export class ResidenceService {
     birdhouse.eggs = createResidenceRecordDto.eggs;
     await this.birdhouseRepository.save(birdhouse);
 
+    Logger.log(
+      `Birdhouse ${birdhouse.id}'s residence has been updated by ${ubid}`,
+      ResidenceService.name,
+    );
+
     return {
-        birds: birdhouseHistory.birds,
-        eggs: birdhouseHistory.eggs,
-        longitude: birdhouse.longitude,
-        latitude: birdhouse.latitude,
-        name: birdhouse.name
+      birds: birdhouseHistory.birds,
+      eggs: birdhouseHistory.eggs,
+      longitude: birdhouse.longitude,
+      latitude: birdhouse.latitude,
+      name: birdhouse.name,
     };
- }
+  }
 
   /**
    * Returns a birdhouse with a populated list of residency update logs
    * @returns a populated list of residency update logs
    */
   birdhousewithlogs(id: string) {
-    return this.birdhouseRepository
-       .createQueryBuilder('birdhouse')
-       .leftJoinAndSelect('birdhouse.logs', 'logs')
-       .where('birdhouse.id = :id', { id })
-       .orderBy('logs.id', 'DESC') // Assuming 'createdAt' is the field you want to sort by
-       .getOne();
-   }
+    const birdhousewithlogs = this.birdhouseRepository
+      .createQueryBuilder('birdhouse')
+      .leftJoinAndSelect('birdhouse.logs', 'logs')
+      .where('birdhouse.id = :id', { id })
+      .orderBy('logs.id', 'DESC') // Assuming 'createdAt' is the field you want to sort by
+      .getOne();
+
+    Logger.log(
+      `Birdhouse ${id}'s residence logs has been fetched`,
+      ResidenceService.name,
+    );
+
+    return birdhousewithlogs;
+  }
 }

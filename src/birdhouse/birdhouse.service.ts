@@ -35,7 +35,7 @@ export class BirdhouseService {
 
     Logger.log(
       `Birdhouse ${newBirdhouse.name} created by ${ubid}`,
-      'CreateBirdhouseService',
+      BirdhouseService.name,
     );
 
     return createdbirdhouse;
@@ -50,7 +50,7 @@ export class BirdhouseService {
 
     Logger.log(
       `Fetched and return list of all bird houses`,
-      'FetchAllBirdhouseService',
+      BirdhouseService.name,
     );
     return birdhouseList;
   }
@@ -85,7 +85,7 @@ export class BirdhouseService {
 
     Logger.log(
       `Birdhouse ${birdhouse.id} updated by ${ubid}.`,
-      'CreateBirdhouseService',
+      BirdhouseService.name,
     );
 
     return updatedBirdhouse;
@@ -104,6 +104,11 @@ export class BirdhouseService {
     if (!birdhouse) {
       throw new NotFoundException(`Birdhouse with ID ${id} not found`);
     }
+
+    Logger.log(
+      `Birdhouse ${birdhouse.id} removed by ${ubid}.`,
+      BirdhouseService.name,
+    );
 
     await this.birdhouseRepository.remove(birdhouse);
     return { message: `Birdhouse with ID ${id} removed successfully` };

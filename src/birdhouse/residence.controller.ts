@@ -6,6 +6,7 @@ import {
   UseGuards,
   HttpCode,
   Get,
+  Req,
 } from '@nestjs/common';
 import { BirdhouseService } from './birdhouse.service';
 import { XUbidGuard } from 'src/gaurds/xubid.guard';
@@ -32,8 +33,10 @@ export class ResidencyController {
   update(
     @Param('id') id: string,
     @Body() createResidenceRecordDto: UpdateResidenceDto,
+    @Req() request
   ) {
-    return this.residenceService.createrecord(id, createResidenceRecordDto);
+    const ubid = request.headers['x-ubid'];
+    return this.residenceService.createrecord(id, createResidenceRecordDto, ubid);
   }
 
   @Get(':id/residency')
