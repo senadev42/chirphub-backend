@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 
 config();
 
+//for migrations
 export default new DataSource({
     type: 'postgres',
     // db config
@@ -15,5 +16,5 @@ export default new DataSource({
 
     entities: [__dirname + '../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '../migrations/**/*.ts'],
-    ssl: process.env.NEONDB == 'true' || false,
+    ssl: process.env.SSLDB == 'true' || false,
 });

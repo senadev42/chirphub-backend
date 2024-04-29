@@ -1,9 +1,7 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   Logger,
-  NotFoundException,
+
 } from '@nestjs/common';
 
 import { Birdhouse } from './entities/birdhouse.entity';

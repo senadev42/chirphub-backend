@@ -42,8 +42,6 @@ export class XUbidGuard implements CanActivate {
       where: { ubid: ubid.toString() },
     });
 
-    console.log("bird house", birdhouse);
-
     //Not found
     if (birdhouse == null) {
       let exception = new HttpException(
