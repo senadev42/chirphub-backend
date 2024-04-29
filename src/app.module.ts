@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BirdhouseModule } from './birdhouse/birdhouse.module';
+import {TaskModule} from './tasks/tasks.module'
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       // db config
@@ -19,6 +22,7 @@ import { BirdhouseModule } from './birdhouse/birdhouse.module';
       ssl: process.env.NEONDB == 'true' || false,
     }),
     BirdhouseModule,
+    TaskModule,
   ],
 })
 export class AppModule {}

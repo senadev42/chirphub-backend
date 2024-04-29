@@ -3,7 +3,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { BirdhouseHistory } from './birdhousehistory.entity';
 
@@ -32,4 +33,10 @@ export class Birdhouse {
 
   @OneToMany(() => BirdhouseHistory, (log) => log.birdhouse)
   logs: BirdhouseHistory[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -8,7 +8,7 @@ import { Format } from 'logform';
 export const LoggerFactory = (appName: string) => {
   let consoleFormat: Format;
 
-  const DEBUG = process.env.DEBUG;
+  const DEBUG = process.env.DEBUG || 'debug';
 
   consoleFormat = format.combine(
     format.timestamp(),
