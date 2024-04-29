@@ -14,6 +14,9 @@ async function bootstrap() {
     logger: LoggerFactory('Nest'),
   });
 
+  app.enableCors();
+
+
   //logging
   const morganStream = {
     write: (message: string) => {

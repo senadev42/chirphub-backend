@@ -5,12 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateBirdhouseDto } from './dto/birdhouse-request.dto';
-import { UpdateBirdhouseDto } from './dto/birdhouse-response.dto';
+
 import { Birdhouse } from './entities/birdhouse.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+
 import { BirdhouseHistory } from './entities/birdhousehistory.entity';
 import { UpdateResidenceDto } from './dto/residence-request.dto';
 
@@ -60,9 +59,11 @@ export class ResidenceService {
    * @returns a populated list of residency update logs
    */
   birdhousewithlogs(id: string) {
-    return this.birdhouseRepository.findOne({ 
-        where: { id: id },
-        relations: ['logs'] // Specify the relation to load
-     });
-  }
+    return this.birdhouseRepository
+       .createQueryBuilder('birdhouse')
+       .leftJoinAndSelect('birdhouse.logs', 'logs')
+       .where('birdhouse.id = :id', { id })
+       .orderBy('logs.id', 'DESC') // Assuming 'createdAt' is the field you want to sort by
+       .getOne();
+   }
 }

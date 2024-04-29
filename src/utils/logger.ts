@@ -21,7 +21,16 @@ export const LoggerFactory = (appName: string) => {
 
   return WinstonModule.createLogger({
     level: DEBUG ? 'debug' : 'info',
-    transports: [new transports.Console({ format: consoleFormat })],
+    transports: [
+      new transports.Console({ format: consoleFormat }),
+      new transports.File({
+        filename: 'app.log',
+        level: DEBUG ? 'debug' : 'info', 
+        format: format.combine(
+          format.timestamp(),
+          format.json(), 
+        ),
+      }),
+    ],
   });
 };
-
