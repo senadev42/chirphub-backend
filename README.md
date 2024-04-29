@@ -51,22 +51,18 @@ npm run start:dev
 ### Swagger Documentation
 
 Explore the APIs using the Swagger documentation available at: `http://localhost:{port}/api/v1/apidocs`
+
 Replace `{port}` with the port configured in your environment variables.
 
 ## Directory Structure
 
-- `src`: Contains the source code of the NestJS application.
-  - `app.module.ts`: Main module definition.
+- `src`:
   - `birdhouse`: Module for birdhouse-related functionality.
-  - `gaurds`: Guards for authentication and authorization.
-  - `main.ts`: Entry point of the application.
-  - `tasks`: Module for schedules tasks functionality.
-  - `utils`: Utility functions and helpers.
+  - `gaurds`: Guards for authentication/authorization.
+  - `tasks`: Module for scheduleing/tasks.
+  - `utils`: Utility functions and helpers (logger, seeding).
 - `migrations`: Database migrations.
-- `seeders`: Utilizing migrations to seed database (read more below).
-- `test`: End-to-end test cases.
-- `README.md`: Project documentation.
-- Other configuration files (`nest-cli.json`, `package.json`, `tsconfig.json`, etc.).
+- `seeders`: Using migrations as a workaround to seed database (read more below).
 
 ## Retrospective
 
