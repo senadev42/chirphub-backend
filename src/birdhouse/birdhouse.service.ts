@@ -1,10 +1,16 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBirdhouseDto } from './dto/birdhouse-request.dto';
 import { UpdateBirdhouseDto } from './dto/birdhouse-response.dto';
 import { Birdhouse } from './entities/birdhouse.entity';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class BirdhouseService {
@@ -13,12 +19,19 @@ export class BirdhouseService {
     private birdhouseRepository: Repository<Birdhouse>,
   ) {}
 
-  create(createBirdhouseDto: CreateBirdhouseDto, ubid: string) {
-    const newBirdhouse = this.birdhouseRepository.create({
-      ...createBirdhouseDto,
-      ubid,
-    });
-    return this.birdhouseRepository.save(newBirdhouse);
+  create(createBirdhouseDto: CreateBirdhouseDto) {
+
+    const ubid = uuid();
+    const newBirdhouse = this.birdhouseRepository.create({...createBirdhouseDto, ubid});
+
+    const createdbirdhouse = this.birdhouseRepository.save(newBirdhouse);
+
+    Logger.log(
+      `Birdhouse ${newBirdhouse.name} created by ${ubid}`,
+      'BirdhouseService',
+    );
+
+    return createdbirdhouse;
   }
 
   findAll() {
@@ -30,15 +43,20 @@ export class BirdhouseService {
   }
 
   async update(id: string, updateData: Partial<Birdhouse>, ubid: string) {
-    const birdhouse = await this.birdhouseRepository.findOne({ where: { id: id } });
+    const birdhouse = await this.birdhouseRepository.findOne({
+      where: { id: id },
+    });
     if (!birdhouse) {
       throw new NotFoundException(`Birdhouse with ID ${id} not found`);
     }
 
     if (birdhouse.ubid !== ubid) {
-      throw new HttpException('Ubid does not match the birdhouse', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Ubid does not match the birdhouse',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
-    
+
     Object.assign(birdhouse, updateData);
     return this.birdhouseRepository.save(birdhouse);
   }
@@ -47,3 +65,4 @@ export class BirdhouseService {
     return `This action removes a ${id} birdhouse`;
   }
 }
+

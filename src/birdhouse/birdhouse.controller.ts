@@ -12,14 +12,11 @@ export class BirdhouseController {
   constructor(private readonly birdhouseService: BirdhouseService) { }
 
   @Post()
-  @UseGuards(XUbidGuard) //is looking out for the prescence of a X-UBID header
-  @ApiOperation({ summary: 'Register a new birdhouse. Needs X-UBID.' })
+  @ApiOperation({ summary: 'Register a new birdhouse.' })
   @ApiResponse({ status: 201 })
   @ApiBody({ type: CreateBirdhouseDto })
-  @ApiXBUIDHeader()
-  async create(@Body() createBirdhouseDto: CreateBirdhouseDto, @Req() request) {
-    const ubid = request.headers['x-ubid'];
-    const newBirdhouse = await this.birdhouseService.create(createBirdhouseDto, ubid);
+  async create(@Body() createBirdhouseDto: CreateBirdhouseDto) {
+    const newBirdhouse = await this.birdhouseService.create(createBirdhouseDto);
     return newBirdhouse;
   }
 
